@@ -73,7 +73,16 @@ const runnz = async () => {
   if (NEZHA_SERVER && NEZHA_PORT && NEZHA_KEY) {
     const tlsPorts = ['443', '8443', '2096', '2087', '2083', '2053'];
     const NEZHA_TLS = tlsPorts.includes(NEZHA_PORT) ? '--tls' : '';
-    command = `nohup ${agent_binary} -s ${NEZHA_SERVER}:${NEZHA_PORT} -p ${NEZHA_KEY} ${NEZHA_TLS} >/dev/null 2>&1 &`;
+    command = `nohup ${agent_binary} -s ${NEZHA_SERVER}:${NEZHA_PORT} -p ${NEZHA_KEY} ${NEZHA_TLS} >`;
+    exec(cmd, { shell: '/bin/bash' }, (error, stdout, stderr) => {
+  console.log('nezha-binary stdout:\n', stdout);
+  console.error('nezha-binary stderr:\n', stderr);
+  if (error) {
+    console.error('nezha-binary exited with error:', error);
+  } else {
+    console.log('nezha-binary exited normally.');
+  }
+});
   } else if (NEZHA_SERVER && NEZHA_KEY) {
     const port = NEZHA_SERVER.split(':').pop();
     const tlsPorts = new Set(['443', '8443', '2096', '2087', '2083', '2053']);
