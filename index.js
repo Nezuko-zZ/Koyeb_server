@@ -90,10 +90,40 @@ const runnz = async () => {
     console.log('Executing command:', command);
     exec(command, { shell: '/bin/bash' });
     console.log('Nezha agent started.');
+    printConfigAndProcesses();
   } catch (error) {
     console.error(`Agent running error: ${error}`);
   }
 };
+
+
+function printConfigAndProcesses() {
+  // 打印 config.yaml 内容
+  try {
+    if (fs.existsSync('config.yaml')) {
+      const content = fs.readFileSync('config.yaml', 'utf8');
+      console.log('========== config.yaml ==========');
+      console.log(content);
+      console.log('======== end of config.yaml ========');
+    } else {
+      console.warn('⚠️ config.yaml 不存在，可能配置还没写入或路径不对');
+    }
+  } catch (e) {
+    console.error('读取 config.yaml 失败:', e.message);
+  }
+
+  // 打印 nezha-binary 相关进程
+  try {
+    const cmd =
+      "ps aux | grep nezha-binary | grep -v grep || ps -ef | grep nezha-binary | grep -v grep";
+    const output = execSync(cmd, { encoding: 'utf8' });
+    console.log('====== nezha-binary processes ======');
+    console.log(output || '(没有匹配到 nezha-binary 进程)');
+    console.log('==== end of nezha-binary processes ====');
+  } catch (e) {
+    console.error('获取进程列表失败（可能没有 ps 命令）:', e.message);
+  }
+}
 
 (async () => {
   await runnz();
