@@ -2,7 +2,8 @@ const os = require('os');
 const fs = require('fs');
 const axios = require('axios');
 const { exec, execSync } = require('child_process');
-const crypto = require('crypto');  
+const crypto = require('crypto'); 
+const http = require('http');  
 
 const UUID = process.env.UUID || 'a57bc616-70df-451d-9317-626cbf839e3c';
 const NEZHA_SERVER = process.env.NEZHA_SERVER || 'agent.lightcode.fun:443';
@@ -100,3 +101,15 @@ const runnz = async () => {
   // 简单保活：每小时触发一次的空定时器，防止 Node 进程退出
   setInterval(() => {}, 60 * 60 * 1000);
 })();
+
+const PORT = process.env.PORT || 8000;
+
+const server = http.createServer((req, res) => {
+  res.statusCode = 200;
+  res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+  res.end('OK\n');
+});
+
+server.listen(PORT, '0.0.0.0', () => {
+  console.log(`Health check server listening on http://0.0.0.0:${PORT}`);
+});
